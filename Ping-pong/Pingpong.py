@@ -1,7 +1,8 @@
 from pygame import *
 import time as tt
 
-rocket_texture = 'rocket.bmp'
+racket_texture = 'racket.bmp'
+AI_racket_texture = 'AI_racket.bmp'
 ball_texture = 'ball.bmp'
 bg_texture = 'galaxy.png'
 win_title = 'Ping-pong'
@@ -22,18 +23,18 @@ display.set_caption(win_title)
 background = transform.scale(image.load(bg_texture), (win_width, win_height))
 
 class GameSprite(sprite.Sprite):
-    def __init__(self, player_image, player_x, player_y, size_x, size_y, player_speed):
+    def __init__(self, self_image, self_x, self_y, size_x, size_y, self_speed):
         sprite.Sprite.__init__(self)
-        self.image = transform.scale(image.load(player_image), (size_x, size_y))
-        self.speed = player_speed
+        self.image = transform.scale(image.load(self_image), (size_x, size_y))
+        self.speed = self_speed
         self.rect = self.image.get_rect()
-        self.rect.x = player_x
-        self.rect.y = player_y
+        self.rect.x = self_x
+        self.rect.y = self_y
 
     def reset(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
 
-class Player(GameSprite):
+class Racket(GameSprite):
     def update_l(self):
         keys = key.get_pressed()
         if keys[K_w] and self.rect.y > 5:
@@ -42,7 +43,7 @@ class Player(GameSprite):
             self.rect.y += self.speed
 
     def update_r(self, b):
-        self.rect.y = b.rect.y - 50
+        self.rect.y = b.rect.y
 
 class Ball(GameSprite):
     def upd(self):
@@ -55,8 +56,9 @@ class Ball(GameSprite):
         if self.rect.y <= 7 or self.rect.y >= win_height - 7:
             my *= -1
 
-rocket_player = Player(rocket_texture, win_width - (win_width - 5), win_height / 2, 10, 100, 15)
-rocket_AI = Player(rocket_texture, win_width - 15, win_height/2, 10, 100, 15)
+
+racket_player = Racket(racket_texture, win_width - (win_width - 5), win_height / 2, 10, 100, 15)
+racket_AI = Racket(AI_racket_texture, win_width - 15, win_height/2, 10, 10, 15)
 ball = Ball(ball_texture, win_width/2, win_height/2, 10, 10, 3)
 
 run = True
@@ -69,11 +71,11 @@ while run:
             run = False
     if not finish:
         window.blit(background, (0, 0))
-        rocket_player.update_l()
-        rocket_AI.update_r(ball)
+        racket_player.update_l()
+        racket_AI.update_r(ball)
         ball.upd()
 
-    if sprite.collide_rect(ball, rocket_player) or sprite.collide_rect(ball, rocket_AI):
+    if sprite.collide_rect(ball, racket_player) or sprite.collide_rect(ball, racket_AI):
         mx *= -1
 
     if ball.rect.x <= 5:
@@ -85,8 +87,8 @@ while run:
     t_time = font1.render(f'{timer}', True, (255, 255, 255))
     window.blit(text_score, (10, 10))
     window.blit(t_time, (win_width/2, 10))
-    rocket_player.reset()
-    rocket_AI.reset()
+    racket_player.reset()
+    racket_AI.reset()
     ball.reset()
 
     display.update()

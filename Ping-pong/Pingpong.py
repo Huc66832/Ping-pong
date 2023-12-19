@@ -79,8 +79,11 @@ while run:
         mx *= -1
 
     if ball.rect.x <= 5:
-        mx *= -1
+        ball.rect.x = win_width/2
+        ball.rect.y = win_height/2
+        my *= -1
         score += 1
+        t_start = tt.time()
 
     timer = round(tt.time() - t_start, 1)
     text_score = font1.render(f'Loses: {score}', True, (255, 255, 255))
